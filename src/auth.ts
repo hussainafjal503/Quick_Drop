@@ -64,7 +64,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: user?.email,
             image: user?.image,
           });
-        
         }
 
         user.id = dbUser?._id.toString();
@@ -72,7 +71,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return true;
     },
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, session }) {
       //token ke ander user ka data add krna ke kaam ye karta hai..
 
       if (user) {
@@ -82,6 +81,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.email = user.email;
       }
 
+      if (trigger == "update") {
+        token.role = session.role;
+      }
       return token;
     },
     session({ session, token }) {

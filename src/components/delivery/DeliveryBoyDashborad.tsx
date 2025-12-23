@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function DeliveryBoyDashborad() {
-  return (
-	<div>
-	  
-	</div>
-  )
+  return <div>dddddddd</div>;
 }
 
-export default DeliveryBoyDashborad
+export default DeliveryBoyDashborad;

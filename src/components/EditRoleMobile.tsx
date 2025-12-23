@@ -6,7 +6,8 @@ import { motion } from "motion/react";
 import { ArrowRight, Bike, User, UserCog } from "lucide-react";
 import logger from "@/helper_functions/logger";
 import axios from "axios";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 function EditRoleMobile() {
   const [roles, setRoles] = useState([
     {
@@ -28,7 +29,9 @@ function EditRoleMobile() {
 
   const [selectedRole, setSelectedRole] = useState("");
   const [mobile, setMobile] = useState("");
+  const { update } = useSession();
 
+  const router = useRouter();
   const handleEdit = async () => {
     try {
       const result = await axios.post("/api/user/edit-role-mobile", {
@@ -36,8 +39,9 @@ function EditRoleMobile() {
         mobile,
       });
 
+      await update({ role: selectedRole });
       logger.log("Result", result.data);
-      redirect("/");
+      router.replace("/");
     } catch (err) {
       logger.error("Error occured in handleEdit Handler :: ", err);
     }
