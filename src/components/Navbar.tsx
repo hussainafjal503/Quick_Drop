@@ -1,5 +1,6 @@
 "use client";
 
+import { RootState } from "@/store/store";
 import {
   Boxes,
   ClipboardCheck,
@@ -21,6 +22,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useSelector } from "react-redux";
 interface IUser {
   _id?: mongoose.Types.ObjectId;
   name: string;
@@ -37,6 +39,7 @@ function Navbar({ user }: { user: IUser }) {
   const [searchbarOpen, setSearchbarOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const profileDropDown = useRef<HTMLDivElement>(null);
+  const { cartData } = useSelector((state: RootState) => state.cart);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -77,7 +80,7 @@ function Navbar({ user }: { user: IUser }) {
               x: -100,
               opacity: 0,
             }}
-            className="fixed top-0 h-full w-[75%] sm:w-[60%] z-9999 bg-linear-to-b from-orange-800/90 via-orange-700/80 to-orange-900/90 backdrop-blur-xl border-r border-green-400/20 shadow-[0_0_50px_-10px_rgba(0,255,100,0.3)] flex flex-col p-6 text-white "
+            className="fixed top-0 h-full w-[75%] sm:w-[60%] z-9999 bg-linear-to-b from-orange-800/90 via-orange-700/80 to-orange-900/90 backdrop-blur-xl border-r bg-white border-green-400/20 shadow-[0_0_50px_-10px_rgba(0,255,100,0.3)] flex flex-col p-6 text-white "
           >
             <div className="flex justify-between items-center mb-2">
               <h1 className="font-extrabold text-2xl tracking-wide text-white/90">
@@ -155,7 +158,7 @@ function Navbar({ user }: { user: IUser }) {
     : null;
 
   return (
-    <div className="w-[95%] fixed top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-orange-500 to-orange-700 rounded-2xl shadow-lg shadow-black/30 flex justify-between items-center h-15 px-4">
+    <div className="w-[95%] z-999 fixed top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-orange-500 to-orange-700 rounded-2xl shadow-lg shadow-black/30 flex justify-between items-center h-15 px-4">
       <Link
         href={"/"}
         className="text-white font-extrabold text-2xl sm:text-3xl tracking-wide hover:scale-105 transition-transform duration-200"
@@ -185,12 +188,12 @@ function Navbar({ user }: { user: IUser }) {
               <Search />
             </div>
             <Link
-              href={""}
+              href={"/user/cart"}
               className="relative bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:scale-105 transition-all"
             >
               <ShoppingCart className="text-orange-600 w-6 h-6" />
               <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-semibold shadow">
-                0
+                {cartData?.length}
               </span>
             </Link>
           </>

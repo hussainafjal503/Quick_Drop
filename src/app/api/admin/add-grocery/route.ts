@@ -28,7 +28,7 @@ export async function POST(req: NextResponse) {
     const file = formData.get("image") as Blob | null;
     let imageUrl;
     if (file) {
-      imageUrl = uploadonCloudinary(file);
+      imageUrl = await uploadonCloudinary(file);
     }
 
     const grocery = await groceryModel.create({

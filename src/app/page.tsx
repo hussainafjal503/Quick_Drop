@@ -30,11 +30,12 @@ async function page() {
     return <EditRoleMobile />;
   }
   const plainUser = JSON.parse(JSON.stringify(userData));
-  console.log("use data",userData.role)
+  console.log("use data", userData.role);
 
   return (
-    <div>
+    <div className="relative">
       <Navbar user={plainUser} />
+
       {userData.role == "user" ? (
         <UserDashboard />
       ) : // null
