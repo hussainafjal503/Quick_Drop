@@ -25,7 +25,7 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import useGetUser from "@/hooks/useGetUser";
-import { mark } from "motion/react-client";
+import { address, mark } from "motion/react-client";
 import axios from "axios";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 
@@ -39,10 +39,10 @@ function Checkout() {
   const router = useRouter();
   useGetUser();
   const { userData } = useSelector((state: RootState) => state.user);
-  const { subTotal, deliveryFee, finalTotal } = useSelector(
+  const { subTotal, deliveryFee, finalTotal, cartData } = useSelector(
     (state: RootState) => state.cart
   );
-  //   logger.log("user data in checkout screen ==>", userData);
+  // logger.log("user data in checkout screen ==>", userData);
   const [address, setAddress] = useState({
     fullName: "",
     mobile: "",
@@ -149,6 +149,39 @@ function Checkout() {
       setPostion([result[0]?.y, result[0]?.x]);
     }
   };
+
+  const handleCODFunction = async () => {
+    if (!position) return;
+    const newAddress = {
+      ...address,
+      latitude: position[0],
+      longitude: position[1],
+    };
+
+    try {
+      const result = await axios.post("/api/user/order", {
+        userId: userData?._id,
+        items: cartData?.map((item) => ({
+          groceryId: item?._id,
+          name: item?.name,
+          price: item?.price,
+          unit: item?.unit,
+          qty: item?.qty,
+        })),
+        totalAmount: finalTotal,
+        address: newAddress,
+        paymentMethod,
+      });
+
+      // logger.log("proceed order response : =>", result);
+      router.push("/user/order-success");
+    } catch (Err) {
+      logger.error("Error occured in handle code function", Err);
+    }
+  };
+
+  const handleOnlineTransaction = async () => {};
+
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative">
       <motion.button
@@ -406,6 +439,10 @@ function Checkout() {
           </div>
 
           <motion.button
+            onClick={() => {
+              if (paymentMethod === "cod") handleCODFunction();
+              else handleOnlineTransaction();
+            }}
             whileTap={{ scale: 0.8 }}
             className="w-full mt-6 bg-orange-600 text-white py-3 transition-all font-semibold rounded-full hover:bg-orange-700 cursor-pointer"
           >

@@ -13,7 +13,7 @@ function useGetUser() {
     const getUser = async () => {
       try {
         const result = await axios.get("/api/getUser");
-        logger.log("user detail", result);
+        // logger.log("user detail", result);
 
         dispatch(setUserData(result?.data?.data));
       } catch (Err) {
