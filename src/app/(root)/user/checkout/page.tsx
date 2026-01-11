@@ -167,6 +167,7 @@ function Checkout() {
           price: item?.price,
           unit: item?.unit,
           qty: item?.qty,
+          image: item?.image,
         })),
         totalAmount: finalTotal,
         address: newAddress,
@@ -180,7 +181,41 @@ function Checkout() {
     }
   };
 
-  const handleOnlineTransaction = async () => {};
+  const handleOnlineTransaction = async () => {
+    if (!position) return;
+    const newAddress = {
+      ...address,
+      latitude: position[0],
+      longitude: position[1],
+    };
+    logger.log("online called");
+
+    try {
+      const result = await axios.post("/api/user/payment", {
+        userId: userData?._id,
+        items: cartData?.map((item) => ({
+          groceryId: item?._id,
+          name: item?.name,
+          price: item?.price,
+          unit: item?.unit,
+          qty: item?.qty,
+          image: item?.image,
+        })),
+        totalAmount: finalTotal,
+        address: newAddress,
+        paymentMethod,
+      });
+
+      logger.log(result.data.url);
+
+      window.location.href = result.data.url;
+
+      logger.log("proceed order online response : =>", result);
+      // router.push("/user/order-success");
+    } catch (Err) {
+      logger.error("Error occured in handle online Transaction :: ", Err);
+    }
+  };
 
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative">

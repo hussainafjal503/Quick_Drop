@@ -101,32 +101,31 @@ function OrderSuccess() {
         }}
         className="mt-10"
       >
-        <Package  className="w-16 h-16 md:w-20 md:h-20 text-orange-500"/>
+        <Package className="w-16 h-16 md:w-20 md:h-20 text-orange-500" />
       </motion.div>
 
-	  <motion.div
-	  initial={{
-		opacity:0,
-		scale:0.8
-	  }}
-
-	  animate={{
-		opacity:1,
-		scale:1
-	  }}
-	  transition={{
-		delay:1.2,
-		duration:0.4
-	  }}
-	  
-	  className="mt-12"
-	  >
-		<Link
-		className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-base font-semibold px-8 py-3 rounded-full shadow-lg transition-all"
-		href={"/user/my-orders"}
-		
-		>My Order</Link>
-	  </motion.div>
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 0.8,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        transition={{
+          delay: 1.2,
+          duration: 0.4,
+        }}
+        className="mt-12"
+      >
+        <Link
+          className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-base font-semibold px-8 py-3 rounded-full shadow-lg transition-all"
+          href={"/user/my-order"}
+        >
+          My Order
+        </Link>
+      </motion.div>
     </div>
   );
 }

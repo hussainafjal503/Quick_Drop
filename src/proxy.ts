@@ -10,6 +10,10 @@ export async function proxy(req: NextRequest) {
     "/favicon.ico",
     "_next",
   ];
+  // 🔥 Stripe webhook ko bypass karo
+  if (pathname === "/api/user/stripe/webhook") {
+    return NextResponse.next();
+  }
   if (publicRoutes.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
