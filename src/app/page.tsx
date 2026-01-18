@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import DeliveryBoyDashborad from "@/components/delivery/DeliveryBoyDashborad";
 import EditRoleMobile from "@/components/EditRoleMobile";
+import GEoUpdateer from "@/components/GEoUpdateer";
 import Navbar from "@/components/Navbar";
 import UserDashboard from "@/components/user/UserDashboard";
 import logger from "@/helper_functions/logger";
@@ -35,6 +36,7 @@ async function page() {
   return (
     <div className="relative">
       <Navbar user={plainUser} />
+      <GEoUpdateer userId={plainUser._id} />
 
       {userData.role == "user" ? (
         <UserDashboard />

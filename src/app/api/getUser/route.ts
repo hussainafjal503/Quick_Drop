@@ -19,7 +19,7 @@ export async function GET(req: NextResponse) {
         }
       );
     }
-    logger.log("getting userData::", session.user);
+    // logger.log("getting userData::", session.user);
     const userData = await userModel
       .findOne({ email: session?.user?.email })
       .select("-password");

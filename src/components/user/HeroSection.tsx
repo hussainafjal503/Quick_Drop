@@ -1,10 +1,13 @@
 "use client";
 import useGetUser from "@/hooks/useGetUser";
+import { RootState } from "@/store/store";
+import { getSocket } from "@/utils/socket";
 import { Leaf, ShoppingBasket, Smartphone, Truck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { s } from "motion/react-client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 function HeroSection() {
   const slides = [
@@ -40,9 +43,8 @@ function HeroSection() {
       bg: "https://images.unsplash.com/photo-1605447813584-26aeb3f8e6ae?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZyZXNoJTIwb3JnYW5pYyUyMGdyb2Nlcmllc3xlbnwwfHwwfHx8MA%3D%3D",
     },
   ];
-
-  const [currentSlide, setCurrentSlide] = useState(0);
   useGetUser();
+  const [currentSlide, setCurrentSlide] = useState(0);
   useEffect(() => {
     let intervalId = setInterval(
       () => setCurrentSlide((prev) => (prev + 1) % slides.length),

@@ -1,7 +1,12 @@
 import React from "react";
+import DeliveryBoy from "./DeliveryBoy";
 
 function DeliveryBoyDashborad() {
-  return <div>dddddddd</div>;
+  return (
+    <>
+      <DeliveryBoy />
+    </>
+  );
 }
 
 export default DeliveryBoyDashborad;

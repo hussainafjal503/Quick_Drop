@@ -9,6 +9,9 @@ interface IUser {
   mobile?: string;
   role: "user" | "deliveryBoy" | "admin";
   image?: string;
+  location?: any;
+  socketId?: string | null;
+  isOnline?: boolean;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -42,9 +45,30 @@ const userSchema = new mongoose.Schema<IUser>(
     image: {
       type: String,
     },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number],
+        default: [0, 0],
+      },
+    },
+    socketId: {
+      type: String,
+      default: null,
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
+
+userSchema.index({ location: "2dsphere" });
 
 const userModel =
   mongoose?.models?.userModel || mongoose.model("userModel", userSchema);

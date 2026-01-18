@@ -17,6 +17,9 @@ export async function proxy(req: NextRequest) {
   if (publicRoutes.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
+  if (pathname.startsWith("/api/socket")) {
+    return NextResponse.next();
+  }
 
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 

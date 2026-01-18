@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { motion } from "motion/react";
 import { ArrowRight, Bike, User, UserCog } from "lucide-react";
@@ -44,6 +44,21 @@ function EditRoleMobile() {
       router.replace("/");
     } catch (err) {
       logger.error("Error occured in handleEdit Handler :: ", err);
+    }
+  };
+
+  useEffect(() => {
+    checkForAdminHandler();
+  }, []);
+
+  const checkForAdminHandler = async () => {
+    try {
+      const result = await axios.get("/api/check-for-admin");
+      if (result?.data?.adminExists) {
+        setRoles((prev) => prev.filter((role) => role.id != "admin"));
+      }
+    } catch (err) {
+      logger.error("Error occured while checking that admin exist or not");
     }
   };
   return (

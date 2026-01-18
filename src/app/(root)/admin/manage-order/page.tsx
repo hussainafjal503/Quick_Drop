@@ -1,0 +1,54 @@
+"use client";
+
+import AdminOrderCard from "@/components/admin/AdminOrderCard";
+import logger from "@/helper_functions/logger";
+import axios from "axios";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+
+function ManageOrders() {
+  const router = useRouter();
+  const [orderDetails, setOrderDetails] = useState([]);
+  const fetchAllOrders = async () => {
+    try {
+      const result = await axios.get("/api/admin/get-allOrders");
+      //   logger.log(result)
+      setOrderDetails(result?.data?.orders);
+    } catch (err) {
+      logger.error(
+        "error occured while fetching order detail in Admin :: ",
+        err
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchAllOrders();
+  }, []);
+  return (
+    <div className="min-h-screen bg-gray-50 w-full">
+      <div className="fixed top-0 left-0 w-full backdrop-blur-lg bg-white/70 shadow-sm border-b z-50">
+        <div className="max-w-3xl mx-auto flex items-center gap-4 px-4 py-3">
+          <button
+            onClick={() => router.replace("/")}
+            className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 active:scale-95 transition"
+          >
+            <ArrowLeft className="text-orange-700" size={24} />
+          </button>
+          <h1 className="text-xl font-bold text-gray-800">Manage Orders</h1>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 pt-24 pb-16 space-y-8">
+        <div className="space-y-6">
+          {orderDetails?.map((order, index) => (
+            <AdminOrderCard  order={order} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ManageOrders;
