@@ -2,6 +2,7 @@ import logger from "@/helper_functions/logger";
 import orderModel from "@/models/order.model";
 import userModel from "@/models/user.model";
 import dbConnection from "@/utils/dbConnection";
+import eventEmitHanlder from "@/utils/eventEmitHanlder";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
       address,
     });
 
+    await eventEmitHanlder("new-order",newOrder)
     if (!newOrder) {
       return NextResponse.json(
         {

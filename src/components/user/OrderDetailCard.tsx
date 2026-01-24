@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
   ChevronDown,
@@ -13,9 +13,25 @@ import {
 } from "lucide-react";
 import { div } from "motion/react-client";
 import Image from "next/image";
+import { getSocket } from "@/utils/socket";
 
 function OrderDetailCard({ order }: { order: any }) {
   const [expanded, setExpanded] = useState<boolean>(false);
+
+  const [status, setStatus] = useState(order?.status);
+
+  useEffect((): any => {
+    const socket = getSocket();
+
+    socket?.on("order-status-update", (data) => {
+      if (String(data?.orderId) == String(order?._id)) {
+        setStatus(data?.status);
+      }
+    });
+
+    return () => socket?.off("order-status-update");
+  }, []);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -60,10 +76,10 @@ function OrderDetailCard({ order }: { order: any }) {
 
           <span
             className={`px-3 py-1 text-xs font-semibold border rounded-full ${getStatusColor(
-              order?.status
+              status
             )}`}
           >
-            {order?.status}
+            {status}
           </span>
         </div>
       </div>
@@ -163,14 +179,14 @@ function OrderDetailCard({ order }: { order: any }) {
               Delivery:{" "}
               <span
                 className={`${
-                  order?.status == "pending"
+                  status == "pending"
                     ? "text-yellow-600"
-                    : order?.status == "delivered"
+                    : status == "delivered"
                     ? "text-green-700"
                     : "text-blue-600"
                 } capitalize`}
               >
-                {order?.status}
+                {status}
               </span>
             </span>
           </div>

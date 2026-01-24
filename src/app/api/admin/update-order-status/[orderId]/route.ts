@@ -3,6 +3,7 @@ import deliveryAssignmentModel from "@/models/deliveryAssignment.model";
 import orderModel from "@/models/order.model";
 import userModel from "@/models/user.model";
 import dbConnection from "@/utils/dbConnection";
+import eventEmitHanlder from "@/utils/eventEmitHanlder";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
@@ -59,9 +60,14 @@ export async function POST(
       );
 
       const candidates = availableDeliveryBoys?.map((b) => b._id);
-      console.log("candidates", candidates);
+      // console.log("candidates", candidates);
       if (candidates.length == 0) {
         await order.save();
+
+        await eventEmitHanlder("order-status-update", {
+          orderId: order._id,
+          status: order?.status,
+        });
         return NextResponse.json(
           {
             message:
@@ -77,6 +83,23 @@ export async function POST(
         status: "brodcasted",
       });
 
+      await deliveryAssignment.populate("orderId");
+
+      console.log("delivery assignemtn :: ", deliveryAssignment);
+
+      for (let boyId of candidates) {
+        const boys = await userModel.findById(boyId);
+
+        if (!boys?.socketId) break;
+        if (boys?.socketId) {
+          await eventEmitHanlder(
+            "notify-delivery",
+            deliveryAssignment,
+            boys?.socketId
+          );
+        }
+      }
+
       order.assignement = deliveryAssignment._id;
       availableDeliveryBoysPayload = availableDeliveryBoys.map((b) => ({
         name: b.name,
@@ -85,13 +108,14 @@ export async function POST(
         latitude: b.location.coordinates[1],
         longitude: b.location.coordinates[0],
       }));
-
-      // await deliveryAssignment.populate("orderModel")
     }
 
     await order.save();
     // await order.populate("userModel")
-
+    await eventEmitHanlder("order-status-update", {
+      orderId: order._id,
+      status: order?.status,
+    });
     return NextResponse.json(
       {
         assignment: order.assignement?._id,

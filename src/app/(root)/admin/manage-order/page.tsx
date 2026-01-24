@@ -2,6 +2,7 @@
 
 import AdminOrderCard from "@/components/admin/AdminOrderCard";
 import logger from "@/helper_functions/logger";
+import { getSocket } from "@/utils/socket";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,7 +10,7 @@ import React, { useEffect, useState } from "react";
 
 function ManageOrders() {
   const router = useRouter();
-  const [orderDetails, setOrderDetails] = useState([]);
+  const [orderDetails, setOrderDetails] = useState<any>([]);
   const fetchAllOrders = async () => {
     try {
       const result = await axios.get("/api/admin/get-allOrders");
@@ -25,6 +26,15 @@ function ManageOrders() {
 
   useEffect(() => {
     fetchAllOrders();
+  }, []);
+
+  useEffect(():any => {
+    const socket = getSocket();
+    socket?.on("new-order", async (newOrder) => {
+      setOrderDetails((prev: any) => [newOrder, ...prev]);
+    });
+
+    return ()=> socket?.off("new-order")
   }, []);
   return (
     <div className="min-h-screen bg-gray-50 w-full">
@@ -43,7 +53,7 @@ function ManageOrders() {
       <div className="max-w-6xl mx-auto px-4 pt-24 pb-16 space-y-8">
         <div className="space-y-6">
           {orderDetails?.map((order, index) => (
-            <AdminOrderCard  order={order} />
+            <AdminOrderCard order={order} />
           ))}
         </div>
       </div>

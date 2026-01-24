@@ -1,16 +1,28 @@
 "use client";
+import { getSocket } from "@/utils/socket";
 import axios from "axios";
 import { div } from "motion/react-client";
 import React, { useEffect, useState } from "react";
-import AssignmentCard from "./AssignmentCard";
 import { json } from "stream/consumers";
 
 function DeliveryBoy() {
   const [assignementData, setAssignmentData] = useState<any>([]);
+
+  useEffect((): any => {
+    const socket = getSocket();
+    socket?.on("notify-delivery", (deliveryAssignment) => {
+      console.log("assignemnt DAta :: ", deliveryAssignment);
+
+      setAssignmentData((prev: any) => [...prev, deliveryAssignment]);
+    });
+
+    return () => socket?.off("notify-delivery");
+  }, []);
+
   const fetchAssignment = async () => {
     try {
       const result = await axios.get("/api/delivery/get-assignements");
-      console.log("result :: ", result?.data?.assignement);
+      //   console.log("result :: ", result?.data?.assignement);
       setAssignmentData(result?.data?.assignement);
     } catch (err) {}
   };
