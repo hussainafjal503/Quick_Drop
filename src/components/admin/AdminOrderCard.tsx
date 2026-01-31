@@ -10,15 +10,19 @@ import {
   Phone,
   Truck,
   User,
+  UserCheck,
 } from "lucide-react";
 import Image from "next/image";
 import logger from "@/helper_functions/logger";
 import axios from "axios";
+import { div } from "motion/react-client";
 
 export default function AdminOrderCard({ order }: { order: any }) {
   const statusOptions = ["pending", "out of delivery"];
   const [expanded, setExpanded] = useState<boolean>(false);
   const [status, setStatus] = useState(order?.status);
+
+  // logger.log("checking the order :: ", order);
 
   const handleUpdateStatus = async (orderId: string, value: string) => {
     if (!value) {
@@ -36,9 +40,8 @@ export default function AdminOrderCard({ order }: { order: any }) {
       setStatus(value);
     } catch (err) {
       logger.error("error occured while updating the stattus:: ", err);
-    }finally{
+    } finally {
       setStatus(value);
-
     }
   };
   return (
@@ -104,6 +107,32 @@ export default function AdminOrderCard({ order }: { order: any }) {
                 : "Online Payment"}
             </span>
           </p>
+
+          {order?.assignedDeliveryBoy && (
+            <div className="mt-4 bg-blue-50 border flex items-center justify-between border-blue-200 rounded-xl p-4">
+              <div className="flex items-center gap-3 text-sm text-gray-700">
+                <UserCheck className="text-blue-600" size={18} />
+
+                <div className="font-semibold text-gray-800">
+                  <p className="">
+                    Assigned To :{" "}
+                    <span>{order?.assignedDeliveryBoy?.name}</span>{" "}
+                  </p>
+
+                  <p className="text-xs text-gray-600">
+                    📞+91 {order?.assignedDeliveryBoy?.mobile}
+                  </p>
+                </div>
+              </div>
+
+              <a
+                className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-700 transition"
+                href={`tel:${order?.assignedDeliveryBoy?.mobile}`}
+              >
+                call
+              </a>
+            </div>
+          )}
         </div>
 
         {/* right */}
@@ -114,8 +143,8 @@ export default function AdminOrderCard({ order }: { order: any }) {
               status == "delivered"
                 ? "bg-green-100 text-green-100"
                 : status == "pending"
-                ? "bg-yellow-100 text-yellow-700"
-                : "bg-blue-100 text-blue-700"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-blue-100 text-blue-700"
             } `}
           >
             {status}
@@ -218,8 +247,8 @@ export default function AdminOrderCard({ order }: { order: any }) {
                 status == "pending"
                   ? "text-yellow-600"
                   : status == "delivered"
-                  ? "text-green-700"
-                  : "text-blue-600"
+                    ? "text-green-700"
+                    : "text-blue-600"
               } capitalize`}
             >
               {status}

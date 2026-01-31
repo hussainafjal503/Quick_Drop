@@ -10,12 +10,15 @@ import {
   Package,
   Scooter,
   Truck,
+  UserCheck,
 } from "lucide-react";
 import { div } from "motion/react-client";
 import Image from "next/image";
 import { getSocket } from "@/utils/socket";
+import { useRouter } from "next/navigation";
 
 function OrderDetailCard({ order }: { order: any }) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState<boolean>(false);
 
   const [status, setStatus] = useState(order?.status);
@@ -76,7 +79,7 @@ function OrderDetailCard({ order }: { order: any }) {
 
           <span
             className={`px-3 py-1 text-xs font-semibold border rounded-full ${getStatusColor(
-              status
+              status,
             )}`}
           >
             {status}
@@ -95,6 +98,47 @@ function OrderDetailCard({ order }: { order: any }) {
             <>
               <CreditCard size={16} className="text-green-600" />
               <span>Online Payment</span>
+            </>
+          )}
+        </div>
+        <div>
+          {order?.assignedDeliveryBoy && (
+            <>
+              <div className="mt-4 bg-blue-50 border flex items-center justify-between border-blue-200 rounded-xl p-4">
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <UserCheck className="text-blue-600" size={18} />
+
+                  <div className="font-semibold text-gray-800">
+                    <p className="">
+                      Assigned To :{" "}
+                      <span>{order?.assignedDeliveryBoy?.name}</span>{" "}
+                    </p>
+
+                    <p className="text-xs text-gray-600">
+                      📞+91 {order?.assignedDeliveryBoy?.mobile}
+                    </p>
+                  </div>
+                </div>
+
+                <a
+                  className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-700 transition"
+                  href={`tel:${order?.assignedDeliveryBoy?.mobile}`}
+                >
+                  call
+                </a>
+              </div>
+
+              <div className="mt-4">
+                <button
+                  onClick={() =>
+                    router.push(`/user/track-order/${order?._id.toString()}`)
+                  }
+                  className="cursor-pointer w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold px-4 py-2 rounded-xl shadow hover:bg-green-700 transition"
+                >
+                  <Truck className="" size={18} />
+                  Track Your Order
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -144,7 +188,7 @@ function OrderDetailCard({ order }: { order: any }) {
                   >
                     <div className="flex items-center gap-3">
                       <Image
-                        src={item?.image}
+                        src={item?.image ?? ""}
                         alt={item?.name}
                         width={48}
                         height={48}
@@ -182,8 +226,8 @@ function OrderDetailCard({ order }: { order: any }) {
                   status == "pending"
                     ? "text-yellow-600"
                     : status == "delivered"
-                    ? "text-green-700"
-                    : "text-blue-600"
+                      ? "text-green-700"
+                      : "text-blue-600"
                 } capitalize`}
               >
                 {status}

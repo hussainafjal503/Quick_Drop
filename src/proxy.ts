@@ -20,6 +20,9 @@ export async function proxy(req: NextRequest) {
   if (pathname.startsWith("/api/socket")) {
     return NextResponse.next();
   }
+  if (pathname.startsWith("/api/chat")) {
+    return NextResponse.next();
+  }
 
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
